@@ -1,5 +1,5 @@
 {
-  "name": "@throw-out-error/minecarft-mcfunction",
+  "name": "@throw-out-error/minecraft-mcfunction",
   "version": "1.0.0",
   "description": "",
   "main": "dist/function.js",
@@ -7,12 +7,26 @@
     "dist/**/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublishOnly": "npm test && npm run lint",
+    "prepare": "npm run build",
+    "version": "npm run format && git add -A src",
+    "build": "tsc --build",
+    "preversion": "npm run lint",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint src"
   },
+  "types": "dist/function.d.ts",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^13.9.8"
+    "@types/node": "^13.9.8",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^2.0.2",
+    "tslint": "^6.1.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.8.3"
   }
 }

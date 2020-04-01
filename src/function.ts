@@ -1,4 +1,5 @@
-import { getDirname, mkdirIfNotExist, fs, assumeMinecraft } from './utility'
+import { getDirname, mkdirIfNotExist, assumeMinecraft } from './utility'
+import fs from 'fs'
 class McFunction {
   commands: Command[]
   path: string
@@ -32,7 +33,7 @@ class McFunction {
    */
   static copy(funct: McFunction): McFunction {
     let copy = new McFunction('_')
-    for (let key of Object.getOwnPropertyNames(funct)) copy[key] = funct[key];
+    for (let key of Object.getOwnPropertyNames(funct)) copy[key] = funct[key]
     return copy
   }
 }
@@ -59,46 +60,61 @@ class Command {
 }
 
 class Selector {
-    target:string;
-    filter:{[key:string]:string};
-    /**
-     * @param {'entity'|'closest player'|'random player'|'self'|'all players'|'e'|'p'|'r'|'s'|'a'} target the target(s) the selctor will pick
-     * @param {object} filter the filter to determine whether or not the target or which targets will be selected
-     */
-    constructor(target:'entity'|'closest player'|'random player'|'self'|'all players'|'e'|'p'|'r'|'s'|'a',filter:{[key:string]:string}={}) {
-        switch(target){
-            case 'entity':
-            case 'e':
-                this.target='e'
-                break;
-            case 'closest player':
-            case 'p':
-                this.target='p';
-                break;
-            case 'random player':
-            case 'r':
-                this.target='r';
-                break;
-            case 'self':
-            case 's':
-                this.target='s';
-                break;
-            case 'all players':
-            case 'a':
-                this.target='a';
-                break;
-            default:
-                throw new Error(`Invalid selector type ${target}`);
-        }
-        this.filter=filter;
+  target: string
+  filter: { [key: string]: string }
+  /**
+   * @param {'entity'|'closest player'|'random player'|'self'|'all players'|'e'|'p'|'r'|'s'|'a'} target the target(s) the selctor will pick
+   * @param {object} filter the filter to determine whether or not the target or which targets will be selected
+   */
+  constructor(
+    target:
+      | 'entity'
+      | 'closest player'
+      | 'random player'
+      | 'self'
+      | 'all players'
+      | 'e'
+      | 'p'
+      | 'r'
+      | 's'
+      | 'a',
+    filter: { [key: string]: string } = {}
+  ) {
+    switch (target) {
+      case 'entity':
+      case 'e':
+        this.target = 'e'
+        break
+      case 'closest player':
+      case 'p':
+        this.target = 'p'
+        break
+      case 'random player':
+      case 'r':
+        this.target = 'r'
+        break
+      case 'self':
+      case 's':
+        this.target = 's'
+        break
+      case 'all players':
+      case 'a':
+        this.target = 'a'
+        break
+      default:
+        throw new Error(`Invalid selector type ${target}`)
     }
-    /**
-     * Outputs the selector as a string
-     * @returns {string}
-     */
-    compile():string{
-        return `@${this.target}[${Object.keys(this.filter).map(s=>`${s}=${this.filter[s]}`).join()}]`;
-    }
+    this.filter = filter
+  }
+  /**
+   * Outputs the selector as a string
+   * @returns {string}
+   */
+  compile(): string {
+    return `@${this.target}[${Object.keys(this.filter)
+      .map(s => `${s}=${this.filter[s]}`)
+      .join()}]`
+  }
 }
 
 class Value {

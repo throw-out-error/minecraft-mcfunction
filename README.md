@@ -1,1 +1,1 @@
-#The library for all your mcfunction needs :D
+# The library for all your mcfunction needs :D
