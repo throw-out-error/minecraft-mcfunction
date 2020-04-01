@@ -1,5 +1,7 @@
-import { getDirname, mkdirIfNotExist, assumeMinecraft } from './utility'
+import { mkdirIfNotExist, assumeMinecraft } from './utility'
 import fs from 'fs'
+import { dirname as getDirname } from 'path'
+
 export class McFunction {
   commands: Command[]
   path: string
