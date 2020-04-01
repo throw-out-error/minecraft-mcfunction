@@ -57,6 +57,5 @@ export {
   hasIllegalChars,
   hasIllegalCharsSlash,
   itemArrayFromString,
-  fs,
   assumeMinecraft,
 }
