@@ -1,5 +1,5 @@
 {
-  "name": "mcfunction",
+  "name": "@throw-out-error/minecarft-mcfunction",
   "version": "1.0.0",
   "description": "",
   "main": "dist/function.js",
