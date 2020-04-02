@@ -80,12 +80,10 @@ export class Selector extends Argument {
           if (!scores.length) break;
           argList.push(`scores={${scores.join(",")}}`);
           break;
-        case "team":
-          throw Error("Not implemented");
-          break;
         case "level":
           argList.push(`level=${rangeToString(val)}`);
           break;
+        case "team":
         case "gamemode":
         case "name":
         case "type":
