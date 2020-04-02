@@ -5,10 +5,11 @@ class McFunction {
   path: string
   /**
    * @param {string} path the path of the file relative to namspace/functions
+   * @param {Command[]} commands the commands of the file in an array
    */
-  constructor(path: string) {
-    this.path = path
-    this.commands = []
+  constructor(path: string,commands:Command[]) {
+    this.path = path;
+    this.commands = commands;
   }
   compile(path: string) {
     let functionPath = `${path}/${this.path}.mcfunction`
@@ -21,10 +22,9 @@ class McFunction {
   /**
    * Add a command to the function
    * @param {Command} command the command to be added
+   * @deprecated pass the commands as an array to the constructor instead
    */
   addCommand(command: Command) {
-    this.commands.push(command)
-    return this
   }
   /**
    * Copies the function
@@ -32,7 +32,7 @@ class McFunction {
    * @returns {McFunction} a reference to the function
    */
   static copy(funct: McFunction): McFunction {
-    let copy = new McFunction('_')
+    let copy = new McFunction('_',[]);
     for (let key of Object.getOwnPropertyNames(funct)) copy[key] = funct[key]
     return copy
   }
