@@ -1,5 +1,8 @@
 export abstract class Argument {
-  public abstract toString(): string;
+  public abstract compile(): string;
+  public toString(): string {
+    return this.compile();
+  }
 }
 
 export * from "./selector";

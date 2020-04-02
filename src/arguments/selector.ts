@@ -69,7 +69,7 @@ export class Selector extends Argument {
     this.arguments = args;
   }
 
-  toString() {
+  compile() {
     const argList: string[] = [];
     for (let [arg, val] of Object.entries(this.arguments)) {
       switch (arg) {
