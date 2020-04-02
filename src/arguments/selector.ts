@@ -7,6 +7,7 @@ enum SelectorTarget {
   entity = "e",
   executer = "s"
 }
+export { SelectorTarget };
 
 type EntityType = "player" | "zombie" | string;
 
