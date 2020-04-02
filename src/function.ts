@@ -1,6 +1,8 @@
-import { getDirname, mkdirIfNotExist, assumeMinecraft } from './utility'
+import { mkdirIfNotExist, assumeMinecraft } from './utility'
 import fs from 'fs'
-class McFunction {
+import { dirname as getDirname } from 'path'
+
+export class McFunction {
   commands: Command[]
   path: string
   /**
@@ -38,7 +40,7 @@ class McFunction {
   }
 }
 
-class Command {
+export class Command {
   method: string
   params: Array<Value | string | Selector>
   /**
@@ -59,7 +61,7 @@ class Command {
   }
 }
 
-class Selector {
+export class Selector {
   target: string
   filter: { [key: string]: string }
   /**
@@ -117,7 +119,7 @@ class Selector {
   }
 }
 
-class Value {
+export class Value {
   type: string
   value: string
   /**
@@ -149,7 +151,7 @@ class Value {
   }
 }
 
-class ValueArray {
+export class ValueArray {
   type: string
   values: Value[]
   /**
@@ -172,5 +174,3 @@ class ValueArray {
     return `[${this.values.map(v => v.compile()).join(', ')}]`
   }
 }
-
-export { McFunction, Command, Selector, Value, ValueArray }

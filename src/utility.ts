@@ -1,5 +1,4 @@
 import fs from 'fs'
-import { dirname as getDirname } from 'path'
 function jsonBeautify(object: object | Array<any>): string {
   let json: string[] = JSON.stringify(object).split('')
   let indent: number = 0
@@ -52,7 +51,6 @@ function assumeMinecraft(s: string): string {
 
 export {
   jsonBeautify,
-  getDirname,
   mkdirIfNotExist,
   hasIllegalChars,
   hasIllegalCharsSlash,
