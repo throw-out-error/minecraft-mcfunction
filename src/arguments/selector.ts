@@ -1,4 +1,4 @@
-import { Argument, Range, rangeToString, NBT } from "./";
+import { ArgumentObject, Range, rangeToString, NBT } from "./";
 
 export enum SelectorTarget {
   nearest = "p",
@@ -8,7 +8,7 @@ export enum SelectorTarget {
   executer = "s"
 }
 
-type EntityType = "player" | "zombie" | string;
+type EntityType = "player" | "zombie" | string; // TODO
 
 interface SelectorArguments {
   x?: number;
@@ -59,7 +59,7 @@ function boolanMapToString(map: { [val: string]: boolean }, key: string) {
   );
 }
 
-export class Selector extends Argument {
+export class Selector extends ArgumentObject {
   public target: SelectorTarget;
   public arguments: SelectorArguments;
 
