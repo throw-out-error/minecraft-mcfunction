@@ -7,6 +7,7 @@ export abstract class ArgumentObject {
 
 export type Argument = ArgumentObject | string;
 
+export * from "./entity";
 export * from "./nbt";
 export * from "./selector";
 export * from "./util";
