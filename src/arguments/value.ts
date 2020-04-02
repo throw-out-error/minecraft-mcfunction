@@ -53,3 +53,16 @@ export class ValueArray {
     return `[${this.values.map(v => v.compile()).join(", ")}]`;
   }
 }
+
+export class ValueCompound {
+  values: {[key:string]:Value|ValueArray|ValueCompound};
+  /**
+   * @param {object} values
+   */
+  constructor(values:{[key:string]:Value|ValueArray|ValueCompound}){
+    this.values=values;
+  }
+  compile(): string {
+    return `{${Object.keys(this.values).map(s=>`s:${this.values[s].compile()}`)}}`;
+  }
+}
