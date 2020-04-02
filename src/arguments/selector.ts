@@ -1,13 +1,12 @@
 import { Argument, Range, rangeToString, NBT } from "./";
 
-enum SelectorTarget {
+export enum SelectorTarget {
   nearest = "p",
   random = "r",
   player = "a",
   entity = "e",
   executer = "s"
 }
-export { SelectorTarget };
 
 type EntityType = "player" | "zombie" | string;
 
