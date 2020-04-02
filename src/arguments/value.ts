@@ -63,6 +63,6 @@ export class ValueCompound {
     this.values=values;
   }
   compile(): string {
-    return `{${Object.keys(this.values).map(s=>`s:${this.values[s].compile()}`)}}`;
+    return `{${Object.keys(this.values).map(s=>`${s}:${this.values[s].compile()}`)}}`;
   }
 }
