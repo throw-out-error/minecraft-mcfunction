@@ -1,21 +1,21 @@
-import { Argument, ArgumentObject } from "../arguments";
+import { Argument, ArgumentObject, rangeToString } from "../arguments";
 
 type CommandName = "kill" | "tp" | string; //TODO
 
 export class Command<
-  T extends CommandName = any,
-  U extends Argument[] = any[]
+  T extends CommandName = string,
+  U extends Argument[] = Argument[]
 > extends ArgumentObject {
   name: T;
   arguments: U;
   /**
-   * @param {CommandName} method the command to be executed
-   * @param {Argument[]} params the parameters to be passed to the command
+   * @param {CommandName} name the command to be executed
+   * @param {Argument[]} args the parameters to be passed to the command
    */
-  constructor(method: T, params: U = [] as any) {
+  constructor(name: T, args: U = [] as any) {
     super();
-    this.name = method;
-    this.arguments = params;
+    this.name = name;
+    this.arguments = args;
   }
 
   /**
@@ -25,7 +25,27 @@ export class Command<
     let cmd: string = this.name;
     const args: string[] = [];
     for (let arg of this.arguments) {
-      args.push(typeof arg === "string" ? arg : arg.compile());
+      if (typeof arg === "string") {
+        args.push(`${arg}`);
+        continue;
+      }
+
+      if (typeof arg === "number") {
+        args.push("" + arg);
+        continue;
+      }
+
+      if (arg instanceof ArgumentObject) {
+        args.push(arg.toString());
+        continue;
+      }
+
+      if (Array.isArray(arg) && arg.length === 2) {
+        args.push(rangeToString(arg));
+        continue;
+      }
+
+      throw Error("Unknown type of argument");
     }
     if (args.length) {
       cmd += ` ${args.join(" ")}`;
