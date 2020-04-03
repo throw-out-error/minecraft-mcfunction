@@ -108,6 +108,10 @@ export class ExecuteCommand extends Command<"execute"> {
     this.arguments.push("unless", ...args);
     return this;
   }
+
+  compile() {
+    return super.compile() + ` run ${this.run.toString()}`;
+  }
 }
 
 export function execute(run: Command): ExecuteCommand {
