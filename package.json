@@ -7,13 +7,13 @@
     "dist/**/*"
   ],
   "scripts": {
-    "prepublishOnly": "npm test && npm run lint",
-    "prepare": "npm run build",
+    "prepare": "npm run build --silent",
     "version": "npm run format && git add -A src",
     "build": "tsc --build",
     "preversion": "npm run lint",
     "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "test": "npm publish --dry-run"
   },
   "types": "dist/function.d.ts",
   "keywords": [
