@@ -1,10 +1,10 @@
 import { Range } from "./util";
 
 export abstract class ArgumentObject {
-  public abstract compile(): string;
-  public toString(): string {
-    return this.compile();
+  public async *compile(): AsyncGenerator<string, void, unknown> {
+    yield this.toString();
   }
+  public abstract toString(): string;
 }
 
 export type Argument = ArgumentObject | string | number | Range;

@@ -16,13 +16,24 @@ export class McFunction {
     this.path = path;
     this.commands = commands;
   }
-  compile(path: string) {
-    let functionPath = `${path}/${this.path}.mcfunction`
-    mkdirIfNotExist(getDirname(functionPath))
-    fs.writeFileSync(
-      functionPath,
-      this.commands.map(c => c.compile()).join('\n')
-    )
+
+  async *compile(path?: string) {
+    let file: fs.WriteStream | null = null;
+
+    if (path) {
+      let functionPath = `${path}/${this.path}.mcfunction`;
+      mkdirIfNotExist(getDirname(functionPath));
+      file = fs.createWriteStream(functionPath);
+    }
+
+    for (let cmd of this.commands) {
+      for await (let s of cmd.compile()) {
+        yield s;
+        file?.write(s);
+      }
+    }
+
+    file?.end();
   }
   /**
    * Add a command to the function

@@ -9,7 +9,7 @@ export class Rotation extends ArgumentObject {
     this.alpha = alpha;
     this.beta = beta;
   }
-  compile() {
+  toString() {
     return `${this.alpha} ${this.beta}`;
   }
 }

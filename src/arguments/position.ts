@@ -11,7 +11,8 @@ export class Position extends ArgumentObject {
     this.y = y;
     this.z = z;
   }
-  compile() {
+
+  toString() {
     return `${this.x} ${this.y} ${this.z}`;
   }
 }

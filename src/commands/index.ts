@@ -18,39 +18,61 @@ export class Command<
     this.arguments = args;
   }
 
-  /**
-   * Outputs the command as a string
-   */
-  compile(): string {
-    let cmd: string = this.name;
-    const args: string[] = [];
+  async *compile() {
+    yield this.name;
     for (let arg of this.arguments) {
+      yield " ";
       if (typeof arg === "string") {
-        args.push(`${arg}`);
+        yield arg;
         continue;
       }
 
       if (typeof arg === "number") {
-        args.push("" + arg);
+        yield `${arg}`;
         continue;
       }
 
       if (arg instanceof ArgumentObject) {
-        args.push(arg.toString());
+        for await (let s of arg.compile()) {
+          yield s;
+        }
         continue;
       }
 
       if (Array.isArray(arg) && arg.length === 2) {
-        args.push(rangeToString(arg));
+        yield rangeToString(arg);
         continue;
       }
 
       throw Error("Unknown type of argument");
     }
-    if (args.length) {
-      cmd += ` ${args.join(" ")}`;
-    }
+  }
 
+  toString() {
+    let cmd = this.name + " ";
+    for (let arg of this.arguments) {
+      if (typeof arg === "string") {
+        cmd += arg;
+        continue;
+      }
+
+      if (typeof arg === "number") {
+        cmd += `${arg}`;
+        continue;
+      }
+
+      if (arg instanceof ArgumentObject) {
+        cmd += arg.toString();
+        continue;
+      }
+
+      if (Array.isArray(arg) && arg.length === 2) {
+        cmd += rangeToString(arg);
+        continue;
+      }
+
+      throw Error("Unknown type of argument");
+    }
     return cmd;
   }
 }

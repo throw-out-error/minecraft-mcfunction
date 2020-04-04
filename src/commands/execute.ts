@@ -109,8 +109,18 @@ export class ExecuteCommand extends Command<"execute"> {
     return this;
   }
 
-  compile() {
-    return super.compile() + ` run ${this.run.toString()}`;
+  async *compile() {
+    for await (let s of super.compile()) {
+      yield s;
+    }
+    yield " run ";
+    for await (let s of this.run.compile()) {
+      yield s;
+    }
+  }
+
+  toString() {
+    return super.toString() + " run " + this.run.toString();
   }
 }
 
