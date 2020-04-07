@@ -127,3 +127,10 @@ export class ExecuteCommand extends Command<"execute"> {
 export function execute(run: Command): ExecuteCommand {
   return new ExecuteCommand(run);
 }
+
+Command.registerCommand("execute", execute);
+declare module "./" {
+  interface CommandContext {
+    execute: typeof execute;
+  }
+}
