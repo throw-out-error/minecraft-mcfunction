@@ -23,7 +23,7 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/throw-out-error/minecraft-mcfunction.git"
+    "url": "git+https://github.com/SebastianSpeitel/mcfunction"
   },
   "license": "ISC",
   "devDependencies": {
