@@ -1,9 +1,11 @@
 import { Argument, ArgumentObject, rangeToString } from "../arguments";
 
-type CommandName = "kill" | "tp" | string; //TODO
+export * from "./execute";
 
-export class Command<
-  T extends CommandName = string,
+export interface CommandContext {}
+
+export abstract class Command<
+  T extends keyof CommandContext = keyof CommandContext,
   U extends Argument[] = Argument[]
 > extends ArgumentObject {
   name: T;
@@ -74,5 +76,20 @@ export class Command<
       throw Error("Unknown type of argument");
     }
     return cmd;
+  }
+
+  static commands: Partial<CommandContext> = {};
+
+  static registerCommand<T extends keyof CommandContext>(
+    name: T,
+    cmd: CommandContext[T]
+  ) {
+    if (this.commands[name]) {
+      throw Error(
+        `Trying to register command ${name} failed. Command already registered.`
+      );
+    }
+
+    this.commands[name] = cmd;
   }
 }
