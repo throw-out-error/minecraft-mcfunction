@@ -1,4 +1,4 @@
-import { Range, Selector, Position, Rotation } from "../arguments";
+import { Range, Selector, Position, Rotation, Argument } from "../arguments";
 import { Command } from "./";
 
 type Path = string;
@@ -48,79 +48,70 @@ type Unless = If;
 
 export class ExecuteCommand extends Command<"execute"> {
   run: Command;
+  conditions: Argument[] = [];
 
   constructor(run: Command) {
     super("execute");
     this.run = run;
   }
 
+  get [Command.ARGUMENTS](): Argument[] {
+    return [...this.conditions, "run", this.run];
+  }
+
   align(...args: Align) {
-    this.arguments.push("align", ...args);
+    this.conditions.push("align", ...args);
     return this;
   }
 
   anchored(...args: Anchored) {
-    this.arguments.push("anchored", ...args);
+    this.conditions.push("anchored", ...args);
     return this;
   }
 
   as(...args: As) {
-    this.arguments.push("as", ...args);
+    this.conditions.push("as", ...args);
     return this;
   }
 
   at(...args: At) {
-    this.arguments.push("at", ...args);
+    this.conditions.push("at", ...args);
     return this;
   }
 
   facing(...args: Facing) {
-    this.arguments.push("facing", ...args);
+    this.conditions.push("facing", ...args);
     return this;
   }
 
   in(...args: In) {
-    this.arguments.push("in", ...args);
+    this.conditions.push("in", ...args);
     return this;
   }
 
   positioned(...args: Positioned) {
-    this.arguments.push("positioned", ...args);
+    this.conditions.push("positioned", ...args);
     return this;
   }
 
   rotated(...args: Rotated) {
-    this.arguments.push("rotated", ...args);
+    this.conditions.push("rotated", ...args);
     return this;
   }
 
   store(...args: Store) {
-    this.arguments.push("store", ...args);
+    this.conditions.push("store", ...args);
     return this;
   }
 
   if(...args: If) {
-    this.arguments.push("if", ...args);
+    this.conditions.push("if", ...args);
     return this;
   }
 
   unless(...args: Unless) {
-    this.arguments.push("unless", ...args);
+    this.conditions.push("unless", ...args);
     return this;
-  }
-
-  async *compile() {
-    for await (let s of super.compile()) {
-      yield s;
-    }
-    yield " run ";
-    for await (let s of this.run.compile()) {
-      yield s;
-    }
-  }
-
-  toString() {
-    return super.toString() + " run " + this.run.toString();
   }
 }
 

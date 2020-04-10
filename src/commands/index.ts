@@ -2,25 +2,34 @@ import { Argument, ArgumentObject, rangeToString } from "../arguments";
 import { History } from "./history";
 export interface CommandContext {}
 
+const NAME: unique symbol = Symbol("name");
+const ARGUMENTS: unique symbol = Symbol("arguments");
+
 export abstract class Command<
   T extends keyof CommandContext = keyof CommandContext,
   U extends Argument[] = Argument[]
 > extends ArgumentObject {
-  name: T;
-  arguments: U;
+  static readonly NAME: typeof NAME = NAME;
+  static readonly ARGUMENTS: typeof ARGUMENTS = ARGUMENTS;
+
+  readonly [NAME]: T;
+  declare readonly [ARGUMENTS]: U;
   /**
    * @param {CommandName} name the command to be executed
    * @param {Argument[]} args the parameters to be passed to the command
    */
-  constructor(name: T, args: U = [] as any) {
+  constructor(name: T, args?: U) {
     super();
-    this.name = name;
-    this.arguments = args;
+    Command.history.add(this);
+    this[NAME] = name;
+    if (args) {
+      this[ARGUMENTS] = args;
+    }
   }
 
   async *compile() {
-    yield this.name;
-    for (let arg of this.arguments) {
+    yield this[NAME];
+    for (let arg of this[ARGUMENTS]) {
       yield " ";
       if (typeof arg === "string") {
         yield arg;
@@ -48,9 +57,11 @@ export abstract class Command<
     }
   }
 
+  /**
+   * @deprecated Use compile instead */
   toString() {
-    let cmd = this.name + " ";
-    for (let arg of this.arguments) {
+    let cmd = this[NAME] + " ";
+    for (let arg of this[ARGUMENTS]) {
       if (typeof arg === "string") {
         cmd += arg;
         continue;
@@ -76,7 +87,9 @@ export abstract class Command<
     return cmd;
   }
 
-  static commands: Partial<CommandContext> = {};
+  static history = new History();
+
+  static commands = {} as CommandContext;
 
   static registerCommand<T extends keyof CommandContext>(
     name: T,
