@@ -6,15 +6,16 @@ export * from "./arguments";
 export * from "./commands";
 
 export class McFunction {
-  commands: Command[];
+  commands = new Set<Command>();
   path: string;
   /**
    * @param {string} path the path of the file relative to namspace/functions
    * @param {Command[]} commands the commands of the file in an array
    */
-  constructor(path: string, commands: Command[] = []) {
+  constructor(path: string, commands: Iterable<Command> = []) {
     this.path = path;
-    this.commands = commands;
+
+    this.commands = commands instanceof Set ? commands : new Set(commands);
   }
 
   async *compile(path?: string) {
@@ -26,11 +27,27 @@ export class McFunction {
       file = fs.createWriteStream(functionPath);
     }
 
+    const deleteSubCommands = (cmd: Command) => {
+      const cmds = cmd[Command.ARGUMENTS].filter(
+        a => a instanceof Command
+      ) as Command[];
+
+      for (let c of cmds) {
+        deleteSubCommands(c);
+        this.commands.delete(c);
+      }
+    };
+
+    this.commands.forEach(deleteSubCommands);
+
+    console.info(`Compiling ${this.commands.size} commands.`);
+
     for (let cmd of this.commands) {
       for await (let s of cmd.compile()) {
         yield s;
         file?.write(s);
       }
+      yield "\n";
     }
 
     file?.end();
