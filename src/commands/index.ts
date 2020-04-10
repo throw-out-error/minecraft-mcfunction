@@ -1,7 +1,5 @@
 import { Argument, ArgumentObject, rangeToString } from "../arguments";
-
-export * from "./execute";
-
+import { History } from "./history";
 export interface CommandContext {}
 
 export abstract class Command<
@@ -93,3 +91,5 @@ export abstract class Command<
     this.commands[name] = cmd;
   }
 }
+
+export * from "./execute";
