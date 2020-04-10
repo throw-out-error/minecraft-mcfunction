@@ -91,4 +91,15 @@ export class McFunction {
     for (let key of Object.getOwnPropertyNames(funct)) copy[key] = funct[key];
     return copy;
   }
+
+  static from(
+    source: () => void,
+    { name = source.name }: { name?: string } = {}
+  ): McFunction {
+    Command.history.push();
+
+    source();
+
+    return new McFunction(name, Command.history.pop());
+  }
 }
