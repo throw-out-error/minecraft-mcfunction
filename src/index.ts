@@ -1,7 +1,7 @@
 import { mkdirIfNotExist } from "./utility";
 import fs from "fs";
 import { dirname as getDirname } from "path";
-import { Command, CommandContext } from "./commands";
+import { Command } from "./commands";
 export * from "./arguments";
 export * from "./commands";
 

@@ -1,10 +1,10 @@
 {
   "name": "@throw-out-error/minecraft-mcfunction",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "",
-  "main": "dist/function.js",
+  "main": "dist/index.js",
   "files": [
-    "dist/**/*"
+    "dist"
   ],
   "scripts": {
     "prepare": "npm run build --silent",
