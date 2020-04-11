@@ -53,28 +53,6 @@ export class McFunction {
     file?.end();
   }
 
-  get context(): CommandContext {
-    type cmdFun = (...args: any[]) => Command;
-
-    const handler: ProxyHandler<cmdFun> = {
-      apply: (...args) => {
-        const cmd = Reflect.apply(...args);
-        this.commands.push(cmd);
-        return cmd;
-      }
-    };
-
-    function wrap<T extends cmdFun>(cmd: T) {
-      return new Proxy<T>(cmd, handler);
-    }
-
-    const ctx = {} as CommandContext;
-    for (let name in Command.commands) {
-      ctx[name] = wrap(Command.commands[name]);
-    }
-
-    return ctx;
-  }
   /**
    * Add a command to the function
    * @param {Command} command the command to be added
