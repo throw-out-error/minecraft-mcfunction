@@ -5,24 +5,46 @@ import { Command } from "./commands";
 export * from "./arguments";
 export * from "./commands";
 
+interface OptionsName {
+  commands: Iterable<Command>;
+}
+interface OptionsSource {
+  name?: string;
+}
+
 export class McFunction {
   commands: Set<Command>;
-  path: string;
-  /**
-   * @param {string} path the path of the file relative to namspace/functions
-   * @param {Command[]} commands the commands of the file in an array
-   */
-  constructor(path: string, commands: Iterable<Command> = []) {
-    this.path = path;
+  name: string;
 
-    this.commands = commands instanceof Set ? commands : new Set(commands);
+  constructor(name: string, opts: OptionsName);
+  constructor(name: string, cmds: Command[]);
+  constructor(source: () => void, opts: OptionsSource);
+  constructor(
+    nameOrSource: string | (() => void),
+    optsOrCmds: Partial<OptionsName & OptionsSource> | Command[] = {}
+  ) {
+    if (Array.isArray(optsOrCmds)) {
+      optsOrCmds = { commands: optsOrCmds };
+    }
+
+    if (typeof nameOrSource === "function") {
+      Command.history.push();
+
+      nameOrSource();
+
+      optsOrCmds.commands = Command.history.pop();
+      nameOrSource = nameOrSource.name;
+    }
+
+    this.name = optsOrCmds.name ?? nameOrSource;
+    this.commands = new Set(optsOrCmds.commands ?? []);
   }
 
   async *compile(path?: string) {
     let file: fs.WriteStream | null = null;
 
     if (path) {
-      let functionPath = `${path}/${this.path}.mcfunction`;
+      let functionPath = `${path}/${this.name}.mcfunction`;
       mkdirIfNotExist(getDirname(functionPath));
       file = fs.createWriteStream(functionPath);
     }
@@ -70,14 +92,7 @@ export class McFunction {
     return copy;
   }
 
-  static from(
-    source: () => void,
-    { name = source.name }: { name?: string } = {}
-  ): McFunction {
-    Command.history.push();
-
-    source();
-
-    return new McFunction(name, Command.history.pop());
+  static from(source: () => void, opts: { name?: string } = {}) {
+    return new McFunction(source, opts);
   }
 }
