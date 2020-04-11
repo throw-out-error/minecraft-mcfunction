@@ -106,3 +106,5 @@ export abstract class Command<
 }
 
 export * from "./execute";
+export * from "./datapack";
+export * from "./scoreboard";
