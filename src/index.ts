@@ -6,7 +6,7 @@ export * from "./arguments";
 export * from "./commands";
 
 export class McFunction {
-  commands = new Set<Command>();
+  commands: Set<Command>;
   path: string;
   /**
    * @param {string} path the path of the file relative to namspace/functions
