@@ -1,41 +1,30 @@
 {
   "name": "@throw-out-error/minecraft-mcfunction",
-  "version": "1.1.0",
-  "description": "",
+  "version": "1.1.1",
+  "description": "A simple way to create your mcfunction files using Typescript syntax.",
   "main": "dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
     "prepare": "npm run build --silent",
-    "version": "npm run format && git add -A src",
     "build": "tsc --build",
-    "preversion": "npm run lint",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint src/**/*.ts",
     "test": "npm publish --dry-run"
   },
-  "types": "dist/function.d.ts",
+  "types": "dist/index.d.ts",
   "keywords": [
     "minecraft",
-    "datapack"
+    "datapack",
+    "mcfunction"
   ],
-  "author": "",
+  "author": "Sebastian Speitel",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SebastianSpeitel/mcfunction"
   },
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "@types/node": "^13.11.1",
-    "@typescript-eslint/eslint-plugin": "^2.27.0",
-    "@typescript-eslint/parser": "^2.27.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-prettier": "^3.1.2",
-    "prettier": "^2.0.4",
-    "tslint": "^6.1.1",
-    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {
