@@ -10,6 +10,7 @@ export abstract class ArgumentObject {
 export type Argument = ArgumentObject | string | number | Range;
 
 export * from "./entity";
+export * from "./item";
 export * from "./nbt";
 export * from "./position";
 export * from "./rotation";
