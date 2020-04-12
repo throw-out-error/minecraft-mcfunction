@@ -16,9 +16,9 @@ export class McFunction {
   commands: Set<Command>;
   name: string;
 
-  constructor(name: string, opts: OptionsName);
-  constructor(name: string, cmds: Command[]);
-  constructor(source: () => void, opts: OptionsSource);
+  constructor(name: string, opts?: OptionsName);
+  constructor(name: string, cmds?: Command[]);
+  constructor(source: () => void, opts?: OptionsSource);
   constructor(
     nameOrSource: string | (() => void),
     optsOrCmds: Partial<OptionsName & OptionsSource> | Command[] = {}
