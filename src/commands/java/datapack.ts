@@ -1,4 +1,4 @@
-import { Command } from "./";
+import { Command } from "..";
 
 type Disable = ["disable", string];
 type Enable = ["enable", string] | ["enable", string, "first" | "last"];
@@ -19,7 +19,7 @@ export function datapack(...args: Args) {
 }
 
 Command.registerCommand("datapack", datapack);
-declare module "./" {
+declare module "../" {
   interface CommandContext {
     datapack: typeof datapack;
   }

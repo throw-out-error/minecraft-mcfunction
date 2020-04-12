@@ -1,5 +1,5 @@
-import { Range, Selector, Position, Rotation, Argument } from "../arguments";
-import { Command } from "./";
+import { Range, Selector, Position, Rotation, Argument } from "../../arguments";
+import { Command } from "../";
 
 type Path = string;
 type Type = "byte" | "short" | "int" | "long" | "float" | "double";
@@ -120,7 +120,7 @@ export function execute(run: Command): ExecuteCommand {
 }
 
 Command.registerCommand("execute", execute);
-declare module "./" {
+declare module "../" {
   interface CommandContext {
     execute: typeof execute;
   }

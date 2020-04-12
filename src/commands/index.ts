@@ -105,6 +105,6 @@ export abstract class Command<
   }
 }
 
-export * from "./execute";
-export * from "./datapack";
-export * from "./scoreboard";
+export * from "./java/execute";
+export * from "./java/datapack";
+export * from "./java/scoreboard";

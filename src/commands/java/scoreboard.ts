@@ -1,5 +1,5 @@
-import { Command } from "./";
-import { Selector } from "../arguments";
+import { Command } from "..";
+import { Selector } from "../../arguments";
 
 type ObjectivesAdd =
   | ["objectives", "add", string, string]
@@ -72,7 +72,7 @@ export function scoreboard(...args: Args) {
 }
 
 Command.registerCommand("scoreboard", scoreboard);
-declare module "./" {
+declare module "../" {
   interface CommandContext {
     scoreboard: typeof scoreboard;
   }
