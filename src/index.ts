@@ -1,7 +1,8 @@
 import { mkdirIfNotExist } from "./utility";
 import fs from "fs";
-import { dirname as getDirname } from "path";
+import pth from "path";
 import { Command } from "./commands";
+import { EOL } from "os";
 export * from "./arguments";
 export * from "./commands";
 
@@ -45,7 +46,7 @@ export class McFunction {
 
     if (path) {
       let functionPath = `${path}/${this.name}.mcfunction`;
-      mkdirIfNotExist(getDirname(functionPath));
+      mkdirIfNotExist(pth.dirname(functionPath));
       file = fs.createWriteStream(functionPath);
     }
 
@@ -62,13 +63,12 @@ export class McFunction {
 
     this.commands.forEach(deleteSubCommands);
 
-    console.info(`Compiling ${this.commands.size} commands.`);
-
     for (let cmd of this.commands) {
       for await (let s of cmd.compile()) {
-        yield s;
         file?.write(s);
+        yield s;
       }
+      file?.write(EOL);
       yield "\n";
     }
 
