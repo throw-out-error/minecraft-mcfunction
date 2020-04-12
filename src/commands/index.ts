@@ -105,6 +105,10 @@ export abstract class Command<
   }
 }
 
-export * from "./java/execute";
+export * from "./java/clear";
 export * from "./java/datapack";
+export * from "./java/effect";
+export * from "./java/execute";
+export * from "./java/give";
+export * from "./java/kill";
 export * from "./java/scoreboard";
