@@ -1,7 +1,7 @@
 import { Command } from "../";
 import { Selector } from "../../arguments";
 
-export class KillCommand extends Command<"kill"> {
+export class KillCommand extends Command<"kill", [Selector]> {
   constructor(target: Selector) {
     super("kill", [target]);
   }
