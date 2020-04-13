@@ -107,6 +107,7 @@ export abstract class Command<
 
 export * from "./java/clear";
 export * from "./java/datapack";
+export * from "./java/difficulty";
 export * from "./java/effect";
 export * from "./java/execute";
 export * from "./java/give";
