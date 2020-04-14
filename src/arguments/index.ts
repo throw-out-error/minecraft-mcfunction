@@ -16,4 +16,3 @@ export * from "./position";
 export * from "./rotation";
 export * from "./selector";
 export * from "./util";
-export * from "./value";
