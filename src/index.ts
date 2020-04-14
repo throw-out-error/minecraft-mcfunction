@@ -41,6 +41,9 @@ export class McFunction {
     this.commands = new Set(optsOrCmds.commands ?? []);
   }
 
+  /**
+   * @param path deprecated: Use the returned generator or wrap it using Readable.from()
+   */
   async *compile(path?: string) {
     let file: fs.WriteStream | null = null;
 
@@ -85,13 +88,15 @@ export class McFunction {
    * Copies the function
    * @param {McFunction} funct the function to be copied
    * @returns {McFunction} a reference to the function
+   * @deprecated This implementation only creates a shallow copy and copies aren't necessary anyways
    */
   static copy(funct: McFunction): McFunction {
-    let copy = new McFunction("_", []);
-    for (let key of Object.getOwnPropertyNames(funct)) copy[key] = funct[key];
-    return copy;
+    return funct;
   }
 
+  /**
+   * @deprecated Use the constructor instead
+   */
   static from(source: () => void, opts: { name?: string } = {}) {
     return new McFunction(source, opts);
   }
