@@ -74,6 +74,7 @@ export class Selector extends ArgumentObject {
     for (let [arg, val] of Object.entries(this.arguments)) {
       if (pos === 0) yield "[";
       else yield ",";
+      pos++;
 
       switch (arg) {
         case "scores":
