@@ -3,8 +3,6 @@ import fs from "fs";
 import pth from "path";
 import { Command } from "./commands";
 import { EOL } from "os";
-export * from "./arguments";
-export * from "./commands";
 
 interface OptionsName {
   commands: Iterable<Command>;
@@ -101,3 +99,6 @@ export class McFunction {
     return new McFunction(source, opts);
   }
 }
+
+export * from "./arguments";
+export * from "./commands";
