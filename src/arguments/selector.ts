@@ -19,9 +19,11 @@ interface SelectorArguments {
   scores?: {
     [score: string]: Range;
   };
-  team?: {
-    [team: string]: boolean;
-  };
+  team?:
+    | string
+    | {
+        [team: string]: false;
+      };
   limit?: number;
   sort?: "nearest" | "furthest" | "random" | "arbitrary";
   level?: Range;
@@ -36,9 +38,11 @@ interface SelectorArguments {
   };
   x_rotation?: Range;
   y_rotation?: Range;
-  type?: {
-    [type in EntityID]?: boolean;
-  };
+  type?:
+    | EntityID
+    | {
+        [type in EntityID]?: false;
+      };
   tag?: {
     [tag: string]: boolean;
   };
@@ -104,6 +108,10 @@ export class Selector extends ArgumentObject {
         case "type":
         case "tag":
         case "predicate":
+          if (typeof val === "string") {
+            list.push([arg, val]);
+            break;
+          }
           list.push(...boolanMapToKVPairs(val, arg));
           break;
 
@@ -197,6 +205,10 @@ export class Selector extends ArgumentObject {
         case "type":
         case "tag":
         case "predicate":
+          if (typeof val === "string") {
+            argList.push(`${arg}=${val}`);
+            break;
+          }
           argList.push(
             ...boolanMapToKVPairs(val, arg).map(p => `${p[0]}=${p[1]}`)
           );
