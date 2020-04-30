@@ -65,9 +65,12 @@ export class Selector extends ArgumentObject {
   public target: SelectorTarget;
   public arguments: SelectorArguments;
 
-  constructor(target: SelectorTarget, args: SelectorArguments = {}) {
+  constructor(
+    target: SelectorTarget | keyof typeof SelectorTarget,
+    args: SelectorArguments = {}
+  ) {
     super();
-    this.target = target;
+    this.target = SelectorTarget[target] ?? target;
     this.arguments = args;
   }
 
@@ -224,5 +227,21 @@ export class Selector extends ArgumentObject {
     const args = argList.length ? `[${argList.join(",")}]` : "";
 
     return `@${this.target}${args}`;
+  }
+
+  static entity(args: SelectorArguments = {}) {
+    return new Selector(SelectorTarget.entity, args);
+  }
+  static executer(args: Omit<SelectorArguments, "sort" | "limit"> = {}) {
+    return new Selector(SelectorTarget.executer, args);
+  }
+  static nearest(args: Omit<SelectorArguments, "type"> = {}) {
+    return new Selector(SelectorTarget.nearest, args);
+  }
+  static player(args: Omit<SelectorArguments, "type"> = {}) {
+    return new Selector(SelectorTarget.player, args);
+  }
+  static random(args: SelectorArguments = {}) {
+    return new Selector(SelectorTarget.random, args);
   }
 }
