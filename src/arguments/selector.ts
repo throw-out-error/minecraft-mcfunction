@@ -12,7 +12,7 @@ interface SelectorArguments {
   x?: number;
   y?: number;
   z?: number;
-  distance?: number;
+  distance?: Range;
   dx?: number;
   dy?: number;
   dz?: number;
@@ -51,10 +51,14 @@ interface SelectorArguments {
   };
 }
 
-function boolanMapToString(map: { [val: string]: boolean }, key: string) {
-  return Object.entries<boolean>(map).map(
-    ([val, v]) => `${key}=${v ? "" : "!"}${val}`
-  );
+function boolanMapToKVPairs<T extends string>(
+  map: { [val: string]: boolean },
+  key: T
+) {
+  return Object.entries<boolean>(map).map(([val, v]) => [
+    key,
+    `${v ? "" : "!"}${val}`
+  ]) as [T, string][];
 }
 
 export class Selector extends ArgumentObject {
@@ -70,35 +74,41 @@ export class Selector extends ArgumentObject {
   async *compile() {
     yield `@${this.target}`;
 
-    let pos = 0;
-    for (let [arg, val] of Object.entries(this.arguments)) {
-      if (pos === 0) yield "[";
-      else yield ",";
-      pos++;
+    const args = Object.entries(this.arguments) as [
+      keyof SelectorArguments,
+      any
+    ][];
 
+    const list: [keyof SelectorArguments, string][] = [];
+    args.forEach(([arg, val]) => {
       switch (arg) {
         case "scores":
           const scores = Object.entries<Range>(val).map(
             ([s, r]) => `${s}=${rangeToString(r)}`
           );
-          if (!scores.length) break;
-          yield `scores={${scores.join(",")}}`;
+          if (!scores.length) return;
+          list.push(["scores", `{${scores.join(",")}}`]);
           break;
+
+        case "distance":
         case "level":
-          yield `level=${rangeToString(val)}`;
+          list.push([arg, `${rangeToString(val)}`]);
           break;
+
         case "team":
         case "gamemode":
         case "name":
         case "type":
         case "tag":
         case "predicate":
-          for (let s of boolanMapToString(val, arg)) yield s;
+          list.push(...boolanMapToKVPairs(val, arg));
           break;
+
         case "x_rotation":
         case "y_rotation":
-          yield `${arg}=${rangeToString(val)}`;
+          list.push([arg, rangeToString(val)]);
           break;
+
         case "advancements":
           type Adv = boolean | { [criteria: string]: boolean };
           const advancements = Object.entries<Adv>(val).map(([adv, v]) => {
@@ -110,14 +120,58 @@ export class Selector extends ArgumentObject {
             });
             return `${adv}={${criterias.join(",")}}`;
           });
-          if (!advancements.length) break;
-          yield `advancements={${advancements.join(",")}}`;
+          if (!advancements.length) return;
+          list.push([arg, `{${advancements.join(",")}}`]);
           break;
+
         default:
-          yield `${arg}=${val}`;
+          list.push([arg, val.toString()]);
+          break;
       }
+    });
+
+    list.sort(([a1, v1], [a2, v2]) => {
+      if (a1 === "type" && v1.charAt(0) !== "!") return -1;
+      if (a2 === "type" && v2.charAt(0) !== "!") return 1;
+
+      if (a1 === "gamemode") return -1;
+      if (a2 === "gamemode") return 1;
+
+      if (a1 === "team") return -1;
+      if (a2 === "team") return 1;
+
+      if (a1 === "type") return -1;
+      if (a2 === "type") return 1;
+
+      if (a1 === "tag") return -1;
+      if (a2 === "tag") return 1;
+
+      if (a1 === "name") return -1;
+      if (a2 === "name") return 1;
+
+      if (a1 === "scores") return -1;
+      if (a2 === "scores") return 1;
+
+      if (a1 === "advancements") return -1;
+      if (a2 === "advancements") return 1;
+
+      if (a1 === "nbt") return -1;
+      if (a2 === "nbt") return 1;
+
+      return a1.localeCompare(a2);
+    });
+
+    if (list.length) {
+      yield "[";
+      for (let i = 0; i < list.length; i++) {
+        if (i > 0) yield ",";
+        const [arg, val] = list[i];
+        yield arg;
+        yield "=";
+        yield val;
+      }
+      yield "]";
     }
-    if (pos > 0) yield "]";
   }
 
   toString() {
@@ -140,7 +194,9 @@ export class Selector extends ArgumentObject {
         case "type":
         case "tag":
         case "predicate":
-          argList.push(...boolanMapToString(val, arg));
+          argList.push(
+            ...boolanMapToKVPairs(val, arg).map(p => `${p[0]}=${p[1]}`)
+          );
           break;
         case "x_rotation":
         case "y_rotation":
