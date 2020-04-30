@@ -2,7 +2,9 @@ import { mkdirIfNotExist } from "./utility";
 import fs from "fs";
 import pth from "path";
 import { Command } from "./commands";
-import { EOL } from "os";
+import { Readable, pipeline as pipeline_ } from "stream";
+import { promisify } from "util";
+const pipeline = promisify(pipeline_);
 
 interface OptionsName {
   commands: Iterable<Command>;
@@ -14,6 +16,7 @@ interface OptionsSource {
 export class McFunction {
   commands: Set<Command>;
   name: string;
+  dependencies = new Set<McFunction>();
 
   constructor(name: string, opts?: OptionsName);
   constructor(name: string, cmds?: Command[]);
@@ -39,18 +42,22 @@ export class McFunction {
     this.commands = new Set(optsOrCmds.commands ?? []);
   }
 
-  /**
-   * @param path deprecated: Use the returned generator or wrap it using Readable.from()
-   */
-  async *compile(path?: string) {
-    let file: fs.WriteStream | null = null;
-
-    if (path) {
-      let functionPath = `${path}/${this.name}.mcfunction`;
-      mkdirIfNotExist(pth.dirname(functionPath));
-      file = fs.createWriteStream(functionPath);
+  compile(): ReturnType<McFunction["generate"]>;
+  compile(path: string): Promise<void>;
+  compile(path?: string) {
+    if (!path) {
+      return this.generate();
     }
 
+    const functionPath = `${path}/${this.name}.mcfunction`;
+    mkdirIfNotExist(pth.dirname(functionPath));
+    const writeStream = fs.createWriteStream(functionPath);
+
+    // pipeline accepts a generator, but typescript doesn't know that
+    return pipeline(Readable.from(this.generate()), writeStream);
+  }
+
+  private async *generate() {
     const deleteSubCommands = (cmd: Command) => {
       const cmds = cmd[Command.ARGUMENTS].filter(
         a => a instanceof Command
@@ -66,14 +73,10 @@ export class McFunction {
 
     for (let cmd of this.commands) {
       for await (let s of cmd.compile()) {
-        file?.write(s);
         yield s;
       }
-      file?.write(EOL);
       yield "\n";
     }
-
-    file?.end();
   }
 
   /**
