@@ -6,5 +6,8 @@ export type Range =
 
 export function rangeToString(r: Range) {
   if (typeof r === "number") return `${r}`;
-  return `${r[0] ?? ""}..${r[1] ?? ""}`;
+
+  const [min = -Infinity, max = Infinity] = r;
+
+  return [min, max].map(n => (isFinite(n) ? n : "")).join("..");
 }
