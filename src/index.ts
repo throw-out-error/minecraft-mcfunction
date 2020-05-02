@@ -4,6 +4,7 @@ import pth from "path";
 import { Command } from "./commands";
 import { Readable, pipeline as pipeline_ } from "stream";
 import { promisify } from "util";
+import { Transpiler } from "./transpiler";
 const pipeline = promisify(pipeline_);
 
 interface OptionsName {
@@ -13,7 +14,7 @@ interface OptionsSource {
   name?: string;
 }
 
-function isIterable(iter: any): iter is Iterable<any> {
+function isIterable<T = any>(iter: any): iter is Iterable<T> {
   return typeof iter[Symbol.iterator] === "function";
 }
 
@@ -34,12 +35,18 @@ export class McFunction {
     }
 
     if (typeof nameOrSource === "function") {
-      Command.history.push();
+      this.name = nameOrSource.name;
+      this.commands = new Set();
 
-      nameOrSource();
+      const transpiler = new Transpiler();
+      const { rootFunction: self, functions } = transpiler.transpile(
+        nameOrSource,
+        optsOrCmds.name
+      );
 
-      optsOrCmds.commands = Command.history.pop();
-      nameOrSource = nameOrSource.name;
+      self.dependencies = new Set(functions.values());
+
+      return self;
     }
 
     this.name = optsOrCmds.name ?? nameOrSource;

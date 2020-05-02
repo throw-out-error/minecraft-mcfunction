@@ -1,6 +1,5 @@
 import { Argument, ArgumentObject, rangeToString } from "../arguments";
-import { History } from "./history";
-export interface CommandContext {}
+import { Transpiler } from "../transpiler";
 
 const NAME: unique symbol = Symbol("name");
 const ARGUMENTS: unique symbol = Symbol("arguments");
@@ -20,11 +19,11 @@ export abstract class Command<
    */
   constructor(name: T, args?: U) {
     super();
-    Command.history.add(this);
     this[NAME] = name;
     if (args) {
       this[ARGUMENTS] = args;
     }
+    Transpiler.emit("command", this);
   }
 
   async *compile() {
@@ -86,8 +85,6 @@ export abstract class Command<
     }
     return cmd;
   }
-
-  static history = new History();
 
   static commands = {} as CommandContext;
 
