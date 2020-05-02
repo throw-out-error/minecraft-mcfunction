@@ -114,4 +114,5 @@ export * from "./java/function";
 export * from "./java/gamemode";
 export * from "./java/give";
 export * from "./java/kill";
+export * from "./java/say";
 export * from "./java/scoreboard";
