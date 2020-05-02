@@ -13,19 +13,23 @@ interface OptionsSource {
   name?: string;
 }
 
+function isIterable(iter: any): iter is Iterable<any> {
+  return typeof iter[Symbol.iterator] === "function";
+}
+
 export class McFunction {
   commands: Set<Command>;
   name: string;
   dependencies = new Set<McFunction>();
 
   constructor(name: string, opts?: OptionsName);
-  constructor(name: string, cmds?: Command[]);
+  constructor(name: string, cmds?: Iterable<Command>);
   constructor(source: () => void, opts?: OptionsSource);
   constructor(
     nameOrSource: string | (() => void),
-    optsOrCmds: Partial<OptionsName & OptionsSource> | Command[] = {}
+    optsOrCmds: Partial<OptionsName & OptionsSource> | Iterable<Command> = {}
   ) {
-    if (Array.isArray(optsOrCmds)) {
+    if (Array.isArray(optsOrCmds) || isIterable(optsOrCmds)) {
       optsOrCmds = { commands: optsOrCmds };
     }
 
