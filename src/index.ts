@@ -19,8 +19,8 @@ function isIterable<T = any>(iter: any): iter is Iterable<T> {
 }
 
 export class McFunction {
-  commands: Set<Command>;
-  name: string;
+  readonly commands: Set<Command>;
+  readonly name: string;
   dependencies = new Set<McFunction>();
 
   constructor(name: string, opts?: OptionsName);
