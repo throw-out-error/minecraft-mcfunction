@@ -4,8 +4,8 @@ import { McFunction } from "..";
 
 interface TranspilerEvents {
   command: [Command];
-  "function:start": [];
-  "function:end": [string];
+  "function:start": [string];
+  "function:end": [];
 }
 
 export interface Transpiler {
@@ -28,6 +28,45 @@ function getSubCommands(cmd: Command): Command[] {
   );
 }
 
+class Stack {
+  #scopes = new Map<string, Set<Command>>();
+  #stack: string[] = [];
+
+  push(name: string, scope?: Set<Command>) {
+    if (this.#scopes.has(name)) {
+      throw Error("Duplicate scope name");
+    }
+    this.#scopes.set(name, scope ?? new Set());
+    this.#stack.unshift(name);
+  }
+
+  pop() {
+    if (this.#stack.length < 1) {
+      throw Error("Empty stack");
+    }
+    const name = this.#stack.shift() as string;
+    return {
+      name,
+      scope: this.#scopes.get(name) as Set<Command>
+    };
+  }
+
+  has(name: string) {
+    return this.#scopes.has(name);
+  }
+
+  get scope() {
+    return this.#scopes.get(this.name) as Set<Command>;
+  }
+
+  get name() {
+    if (this.#stack.length < 1) {
+      throw Error("Empty stack");
+    }
+    return this.#stack[0];
+  }
+}
+
 export class Transpiler extends EventEmitter {
   static running?: Transpiler;
   static emit<T extends keyof TranspilerEvents>(
@@ -38,26 +77,45 @@ export class Transpiler extends EventEmitter {
   }
 
   readonly #functions = new Map<string, McFunction>();
-  readonly #commands = new Set<Command>();
+  readonly #stack = new Stack();
 
   constructor() {
     super();
 
-    this.on("command", cmd => this.#commands.add(cmd));
-    this.on("function:start", () => this.#commands.clear());
-    this.on("function:end", name => {
-      this.purgeSubCommands();
-      if (this.#functions.has(name)) {
-        throw Error("Duplicate function");
+    this.on("command", cmd => {
+      try {
+        this.#stack.scope.add(cmd);
+      } catch {
+        throw Error("Commands are only allowed inside functions");
       }
-      this.#functions.set(name, new McFunction(name, this.#commands));
     });
+    this.on("function:start", this.startFunction.bind(this));
+    this.on("function:end", this.endFunction.bind(this));
   }
 
-  purgeSubCommands() {
-    for (let cmd of this.#commands) {
+  private startFunction(name: string) {
+    // Check for repeated function call
+    if (this.#stack.has(name)) {
+      throw Error("Recursion detected");
+    }
+
+    // Construct new McFunction
+    const fun = new McFunction(name);
+
+    // Push new scope to stack
+    this.#stack.push(name, fun.commands);
+
+    // Register new function
+    this.#functions.set(name, fun);
+  }
+
+  private endFunction() {
+    // Pop stack
+    const { scope: commands } = this.#stack.pop();
+
+    for (let cmd of commands) {
       for (let sub of getSubCommands(cmd)) {
-        this.#commands.delete(sub);
+        commands.delete(sub);
       }
     }
   }
@@ -70,9 +128,9 @@ export class Transpiler extends EventEmitter {
     Transpiler.running = this;
     this.#functions.clear();
 
-    this.emit("function:start");
+    this.emit("function:start", name);
     source();
-    this.emit("function:end", name);
+    this.emit("function:end");
 
     Transpiler.running = undefined;
 
