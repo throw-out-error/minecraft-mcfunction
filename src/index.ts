@@ -54,18 +54,27 @@ export class McFunction {
   }
 
   compile(): ReturnType<McFunction["generate"]>;
-  compile(path: string): Promise<void>;
+  compile(path: string): Promise<any>;
   compile(path?: string) {
     if (!path) {
       return this.generate();
     }
 
-    const functionPath = `${path}/${this.name}.mcfunction`;
+    const functionPath = pth.join(path, `${this.name}.mcfunction`);
     mkdirIfNotExist(pth.dirname(functionPath));
     const writeStream = fs.createWriteStream(functionPath);
 
+    const compiling: Promise<any>[] = [];
+
     // pipeline accepts a generator, but typescript doesn't know that
-    return pipeline(Readable.from(this.generate()), writeStream);
+    compiling.push(pipeline(Readable.from(this.generate()), writeStream));
+
+    for (let sub of this.dependencies) {
+      if (sub === this) continue;
+      compiling.push(sub.compile(path));
+    }
+
+    return Promise.all(compiling);
   }
 
   private async *generate() {
