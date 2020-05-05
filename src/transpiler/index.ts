@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 import { Command, run_function } from "../commands";
 import { McFunction } from "..";
+import Stack from "./stack";
 
 interface TranspilerEvents {
   command: [Command];
@@ -26,28 +27,6 @@ function getSubCommands(cmd: Command): Command[] {
       return [arg, ...getSubCommands(arg)];
     }) ?? []
   );
-}
-
-class Stack {
-  #stack: Set<Command>[] = [];
-
-  push(scope?: Set<Command>) {
-    this.#stack.unshift(scope ?? new Set());
-  }
-
-  pop() {
-    if (this.#stack.length < 1) {
-      throw Error("Empty stack");
-    }
-    return this.#stack.shift() as Set<Command>;
-  }
-
-  peek() {
-    if (this.#stack.length < 1) {
-      throw Error("Empty stack");
-    }
-    return this.#stack[0];
-  }
 }
 
 export class Transpiler extends EventEmitter {
