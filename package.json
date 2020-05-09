@@ -1,6 +1,6 @@
 {
   "name": "@throw-out-error/minecraft-mcfunction",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A simple way to create your mcfunction files using Typescript syntax.",
   "main": "dist/index.js",
   "files": [
