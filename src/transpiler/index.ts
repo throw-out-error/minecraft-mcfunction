@@ -1,12 +1,14 @@
 import { EventEmitter } from "events";
-import { Command, run_function } from "../commands";
+import { Command, run_function, execute, CommandContext } from "../commands";
 import { McFunction } from "..";
+import { Selector, Argument } from "../arguments";
 import Stack from "./stack";
 
 interface TranspilerEvents {
   command: [Command];
   "function:start": [];
   "function:end": Parameters<Transpiler["endFunction"]>;
+  iteration: [Selector, Selector];
 }
 
 export interface Transpiler {
@@ -20,14 +22,27 @@ export interface Transpiler {
   ): boolean;
 }
 
-function getSubCommands(cmd: Command): Command[] {
+function getArguments(cmd: Command): Argument[] {
   return (
     cmd[Command.ARGUMENTS]?.flatMap(arg => {
-      if (!(arg instanceof Command)) return [];
-      return [arg, ...getSubCommands(arg)];
+      if (!(arg instanceof Command)) return [arg];
+      return [arg, ...getArguments(arg)];
     }) ?? []
   );
 }
+
+const positionalCommands: (keyof CommandContext)[] = [];
+const positionalSelectorArguments: (keyof Selector["arguments"])[] = [
+  "x",
+  "x_rotation",
+  "y",
+  "y_rotation",
+  "z",
+  "distance",
+  "dx",
+  "dy",
+  "dz"
+];
 
 export class Transpiler extends EventEmitter {
   static running?: Transpiler;
@@ -55,6 +70,11 @@ export class Transpiler extends EventEmitter {
     });
     this.on("function:start", () => this.#stack.push());
     this.on("function:end", this.endFunction.bind(this));
+    this.on("iteration", (iterable, iterator) => {
+      const scope = this.#stack.peek();
+      scope.iterable = iterable;
+      scope.iterator = iterator;
+    });
   }
 
   private endFunction({
@@ -70,19 +90,70 @@ export class Transpiler extends EventEmitter {
     }
 
     // Pop stack
-    const commands = this.#stack.pop();
+    const scope = this.#stack.pop();
 
-    for (const cmd of commands) {
-      for (const sub of getSubCommands(cmd)) {
-        commands.delete(sub);
+    const iterator = scope.iterator;
+    let requiresLocation = false,
+      requiresExecuter = false;
+    for (let cmd of scope) {
+      // Command uses the iterator
+      // TODO: Also check subfunctions
+      if (iterator) {
+        // Executer
+        if (cmd[Command.ARGUMENTS].some(arg => arg === iterator)) {
+          requiresExecuter = true;
+        }
+
+        // Location
+        if (positionalCommands.includes(cmd[Command.NAME])) {
+          requiresLocation = true;
+        }
+      }
+
+      for (let arg of getArguments(cmd)) {
+        if (arg instanceof Command) {
+          scope.delete(arg);
+        }
+
+        if (iterator && arg instanceof Selector) {
+          if (arg === iterator) {
+            requiresExecuter = true;
+          }
+          const args = arg.arguments;
+          if (
+            args.sort === "furthest" ||
+            args.sort === "nearest" ||
+            positionalSelectorArguments.some(
+              arg => typeof args[arg] !== "undefined"
+            )
+          ) {
+            requiresLocation = true;
+          }
+        }
       }
     }
 
-    const fun = new McFunction(name, commands);
+    const fun = new McFunction(name, scope);
     this.#functions.set(name, fun);
 
+    console.log({ requiresExecuter, requiresLocation });
+
     if (call) {
-      this.#stack.peek().add(run_function(name));
+      if (scope.iterable && scope.iterator) {
+        const exec = execute(run_function(name));
+
+        if (requiresExecuter && requiresLocation) {
+          exec.as(scope.iterable).at(Selector.executer());
+        } else if (requiresLocation) {
+          exec.at(scope.iterable);
+        } else {
+          exec.as(scope.iterable);
+        }
+
+        this.#stack.peek().add(exec);
+      } else {
+        this.#stack.peek().add(run_function(name));
+      }
     }
   }
 
