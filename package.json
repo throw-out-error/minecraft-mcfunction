@@ -9,7 +9,8 @@
   "scripts": {
     "prepare": "npm run build --silent",
     "build": "tsc --build",
-    "test": "npm publish --dry-run"
+    "test": "npm publish --dry-run --silent && mocha && ts-node test",
+    "coverage": "nyc npm run test"
   },
   "types": "dist/index.d.ts",
   "keywords": [
@@ -24,7 +25,12 @@
   },
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/node": "^13.13.4",
+    "mocha": "^7.1.2",
+    "nyc": "^15.0.1",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^8.10.1",
     "typescript": "^3.8.3"
   },
   "dependencies": {
