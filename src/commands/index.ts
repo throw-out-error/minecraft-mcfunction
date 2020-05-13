@@ -59,8 +59,9 @@ export abstract class Command<
   /**
    * @deprecated Use compile instead */
   toString() {
-    let cmd = this[NAME] + " ";
+    let cmd: string = this[NAME];
     for (let arg of this[ARGUMENTS]) {
+      cmd += " ";
       if (typeof arg === "string") {
         cmd += arg;
         continue;
