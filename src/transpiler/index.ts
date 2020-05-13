@@ -88,7 +88,7 @@ export class Transpiler extends EventEmitter {
 
   transpile(
     source: () => void,
-    name: string = source.name
+    name: string = source.name || "root"
   ): { rootFunction: McFunction; functions: Map<string, McFunction> } {
     if (Transpiler.running) throw Error("Compilation in progress");
     Transpiler.running = this;
