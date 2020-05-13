@@ -6,6 +6,12 @@ interface Relativity {
   directional?: boolean;
 }
 
+interface Coords {
+  x: number;
+  y: number;
+  z: number;
+}
+
 function format(coord: number, { directional, relative }: Relativity) {
   if (directional) return "^" + (coord || "");
   if (relative) return "~" + (coord || "");
@@ -21,8 +27,13 @@ export class Position extends ArgumentObject {
   readonly yRel: Relativity;
   readonly zRel: Relativity;
 
+  constructor(coords?: Partial<Coords>, relativity?: keyof Relativity);
   constructor(
-    { x, y, z }: { x?: number; y?: number; z?: number } = {},
+    coords?: Partial<Coords>,
+    relativity?: Relativity & { x?: Relativity; y?: Relativity; z?: Relativity }
+  );
+  constructor(
+    { x, y, z }: Partial<Coords> = {},
     relativity:
       | (Relativity & { x?: Relativity; y?: Relativity; z?: Relativity })
       | keyof Relativity = {}
@@ -49,15 +60,15 @@ export class Position extends ArgumentObject {
     ].join(" ");
   }
 
-  static absolute(coords: { x?: number; y?: number; z?: number } = {}) {
+  static absolute(coords: Partial<Coords> = {}) {
     return new Position(coords, "absolute");
   }
 
-  static relative(coords: { x?: number; y?: number; z?: number } = {}) {
+  static relative(coords: Partial<Coords> = {}) {
     return new Position(coords, "relative");
   }
 
-  static directional(coords: { x?: number; y?: number; z?: number } = {}) {
+  static directional(coords: Partial<Coords> = {}) {
     return new Position(coords, "directional");
   }
 
@@ -69,5 +80,3 @@ export class Position extends ArgumentObject {
     relative: { relative: true }
   };
 }
-
-new Position({ x: 1, y: 1, z: 1 });
