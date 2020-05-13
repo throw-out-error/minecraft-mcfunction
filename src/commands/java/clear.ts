@@ -10,6 +10,7 @@ export class ClearCommand extends Command<"clear", Args> {
 
   constructor(target?: Selector, item?: Item, maxCount: number = Infinity) {
     super("clear");
+    if (maxCount < 0) throw TypeError("maxCount can't be negative");
     this.target = target;
     this.item = item;
     this.maxCount = maxCount;
