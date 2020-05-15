@@ -9,7 +9,7 @@
   "scripts": {
     "prepare": "npm run build --silent",
     "build": "tsc --build",
-    "test": "mocha",
+    "test": "npm run build --silent && mocha",
     "coverage": "npm run build --silent && nyc mocha"
   },
   "types": "dist/index.d.ts",
