@@ -9,8 +9,10 @@
   "scripts": {
     "prepare": "npm run build --silent",
     "build": "tsc --build",
-    "test": "npm run build --silent && mocha",
-    "coverage": "npm run build --silent && nyc mocha"
+    "pretest": "npm run build --silent",
+    "test": "mocha",
+    "precoverage": "npm run build --silent",
+    "coverage": "nyc mocha"
   },
   "types": "dist/index.d.ts",
   "keywords": [
