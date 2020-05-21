@@ -1,9 +1,9 @@
 import fs from 'fs'
 function jsonBeautify(object: object | Array<any>): string {
-  let json: string[] = JSON.stringify(object).split('')
+  const json: string[] = JSON.stringify(object).split('')
   let indent: number = 0
   for (let i: number = 0; i < json.length; i++) {
-    let char: string = json[i]
+    const char: string = json[i]
     switch (char) {
       case '{':
       case '[':

@@ -69,7 +69,7 @@ export class McFunction {
     // pipeline accepts a generator, but typescript doesn't know that
     compiling.push(pipeline(Readable.from(this.generate()), writeStream));
 
-    for (let sub of this.dependencies) {
+    for (const sub of this.dependencies) {
       if (sub === this) continue;
       compiling.push(sub.compile(path));
     }
@@ -83,7 +83,7 @@ export class McFunction {
         a => a instanceof Command
       ) as Command[];
 
-      for (let c of cmds) {
+      for (const c of cmds) {
         deleteSubCommands(c);
         this.commands.delete(c);
       }
@@ -91,8 +91,8 @@ export class McFunction {
 
     this.commands.forEach(deleteSubCommands);
 
-    for (let cmd of this.commands) {
-      for await (let s of cmd.compile()) {
+    for (const cmd of this.commands) {
+      for await (const s of cmd.compile()) {
         yield s;
       }
       yield "\n";
@@ -104,7 +104,7 @@ export class McFunction {
    * @param {Command} command the command to be added
    * @deprecated pass the commands as an array to the constructor instead
    */
-  addCommand(command: Command) {}
+  addCommand(command: Command) {} // eslint-disable-line
   /**
    * Copies the function
    * @param {McFunction} funct the function to be copied

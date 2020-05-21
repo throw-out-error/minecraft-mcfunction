@@ -89,14 +89,14 @@ export class Selector extends ArgumentObject {
     const list: [keyof SelectorArguments, string][] = [];
     args.forEach(([arg, val]) => {
       switch (arg) {
-        case "scores":
+        case "scores": {
           const scores = Object.entries<Range>(val).map(
             ([s, r]) => `${s}=${rangeToString(r)}`
           );
           if (!scores.length) return;
           list.push(["scores", `{${scores.join(",")}}`]);
           break;
-
+        }
         case "distance":
         case "level":
           list.push([arg, `${rangeToString(val)}`]);
@@ -120,7 +120,7 @@ export class Selector extends ArgumentObject {
           list.push([arg, rangeToString(val)]);
           break;
 
-        case "advancements":
+        case "advancements": {
           type Adv = boolean | { [criteria: string]: boolean };
           const advancements = Object.entries<Adv>(val).map(([adv, v]) => {
             if (typeof v === "boolean") {
@@ -134,7 +134,7 @@ export class Selector extends ArgumentObject {
           if (!advancements.length) return;
           list.push([arg, `{${advancements.join(",")}}`]);
           break;
-
+        }
         default:
           list.push([arg, val.toString()]);
           break;
@@ -187,15 +187,16 @@ export class Selector extends ArgumentObject {
 
   toString() {
     const argList: string[] = [];
-    for (let [arg, val] of Object.entries(this.arguments)) {
+    for (const [arg, val] of Object.entries(this.arguments)) {
       switch (arg) {
-        case "scores":
+        case "scores": {
           const scores = Object.entries<Range>(val).map(
             ([s, r]) => `${s}=${rangeToString(r)}`
           );
           if (!scores.length) break;
           argList.push(`scores={${scores.join(",")}}`);
           break;
+        }
         case "level":
           argList.push(`level=${rangeToString(val)}`);
           break;
@@ -217,7 +218,7 @@ export class Selector extends ArgumentObject {
         case "y_rotation":
           argList.push(`${arg}=${rangeToString(val)}`);
           break;
-        case "advancements":
+        case "advancements": {
           type Adv = boolean | { [criteria: string]: boolean };
           const advancements = Object.entries<Adv>(val).map(([adv, v]) => {
             if (typeof v === "boolean") {
@@ -231,6 +232,7 @@ export class Selector extends ArgumentObject {
           if (!advancements.length) break;
           argList.push(`advancements={${advancements.join(",")}}`);
           break;
+        }
         default:
           argList.push(`${arg}=${val}`);
       }

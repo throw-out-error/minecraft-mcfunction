@@ -72,8 +72,8 @@ export class Transpiler extends EventEmitter {
     // Pop stack
     const commands = this.#stack.pop();
 
-    for (let cmd of commands) {
-      for (let sub of getSubCommands(cmd)) {
+    for (const cmd of commands) {
+      for (const sub of getSubCommands(cmd)) {
         commands.delete(sub);
       }
     }

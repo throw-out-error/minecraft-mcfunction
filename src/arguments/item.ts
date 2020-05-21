@@ -16,7 +16,7 @@ export class Item<T extends string = string> extends ArgumentObject {
     yield this.item;
     if (this.nbt) {
       yield "[";
-      for await (let c of this.nbt.compile()) {
+      for await (const c of this.nbt.compile()) {
         yield c;
       }
       yield "]";

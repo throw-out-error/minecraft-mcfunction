@@ -28,7 +28,7 @@ export abstract class Command<
 
   async *compile() {
     yield this[NAME];
-    for (let arg of this[ARGUMENTS]) {
+    for (const arg of this[ARGUMENTS]) {
       yield " ";
       if (typeof arg === "string") {
         yield arg;
@@ -41,7 +41,7 @@ export abstract class Command<
       }
 
       if (arg instanceof ArgumentObject) {
-        for await (let s of arg.compile()) {
+        for await (const s of arg.compile()) {
           yield s;
         }
         continue;
@@ -60,7 +60,7 @@ export abstract class Command<
    * @deprecated Use compile instead */
   toString() {
     let cmd: string = this[NAME];
-    for (let arg of this[ARGUMENTS]) {
+    for (const arg of this[ARGUMENTS]) {
       cmd += " ";
       if (typeof arg === "string") {
         cmd += arg;
