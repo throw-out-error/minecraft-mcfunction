@@ -8,6 +8,8 @@ export enum SelectorTarget {
   executer = "s"
 }
 
+type GameMode = "spectator" | "adventure" | "creative" | "survival";
+
 interface SelectorArguments {
   x?: number;
   y?: number;
@@ -19,30 +21,17 @@ interface SelectorArguments {
   scores?: {
     [score: string]: Range;
   };
-  team?:
-    | string
-    | {
-        [team: string]: false;
-      };
+  team?: string | Record<string, false>;
   limit?: number;
   sort?: "nearest" | "furthest" | "random" | "arbitrary";
   level?: Range;
-  gamemode?: {
-    spectator?: boolean;
-    adventure?: boolean;
-    creative?: boolean;
-    survival?: boolean;
-  };
+  gamemode?: GameMode | Record<GameMode, false>;
   name?: {
     [name: string]: boolean;
   };
   x_rotation?: Range;
   y_rotation?: Range;
-  type?:
-    | EntityID
-    | {
-        [type in EntityID]?: false;
-      };
+  type?: EntityID | Record<EntityID, false>;
   tag?: {
     [tag: string]: boolean;
   };
