@@ -29,7 +29,7 @@ describe("Compilation", function () {
       execute(kill(bats)).in("overworld");
     }
 
-    const mcf = new McFunction(killBats);
+    const mcf = McFunction.from(killBats);
 
     return collect(mcf.compile()).then(str => {
       assert.strictEqual(
@@ -47,7 +47,7 @@ describe("Compilation", function () {
       give(me, cmdBlock);
     }
 
-    const fun = new McFunction(giveMeCommandblock);
+    const fun = McFunction.from(giveMeCommandblock);
     return collect(fun.compile()).then(str => {
       assert.strictEqual(str.trim(), "give @s dirt");
     });
