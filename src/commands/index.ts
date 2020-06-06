@@ -117,3 +117,5 @@ export * from "./java/kill";
 export * from "./java/say";
 export * from "./java/scoreboard";
 export * from "./java/summon";
+export * from "./java/teleport";
+export * from "./java/tp";
