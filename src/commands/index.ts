@@ -104,6 +104,7 @@ export abstract class Command<
 }
 
 export * from "./java/advancement";
+export * from "./java/bossbar";
 export * from "./java/clear";
 export * from "./java/clone";
 export * from "./java/datapack";
