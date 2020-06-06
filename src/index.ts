@@ -7,10 +7,10 @@ import { promisify } from "util";
 import { Transpiler } from "./transpiler";
 const pipeline = promisify(pipeline_);
 
-interface OptionsName {
-  commands: Iterable<Command>;
+interface ConstructorOptions {
+  commands?: Iterable<Command>;
 }
-interface OptionsSource {
+interface FromOptions {
   name?: string;
 }
 
@@ -23,33 +23,17 @@ export class McFunction {
   readonly name: string;
   dependencies = new Set<McFunction>();
 
-  constructor(name: string, opts?: OptionsName);
+  constructor(name: string, opts?: ConstructorOptions);
   constructor(name: string, cmds?: Iterable<Command>);
-  constructor(source: () => void, opts?: OptionsSource);
   constructor(
-    nameOrSource: string | (() => void),
-    optsOrCmds: Partial<OptionsName & OptionsSource> | Iterable<Command> = {}
+    name: string,
+    optsOrCmds: ConstructorOptions | Iterable<Command> = {}
   ) {
     if (Array.isArray(optsOrCmds) || isIterable(optsOrCmds)) {
       optsOrCmds = { commands: optsOrCmds };
     }
 
-    if (typeof nameOrSource === "function") {
-      this.name = nameOrSource.name;
-      this.commands = new Set();
-
-      const transpiler = new Transpiler();
-      const { rootFunction: self, functions } = transpiler.transpile(
-        nameOrSource,
-        optsOrCmds.name
-      );
-
-      self.dependencies = new Set(functions.values());
-
-      return self;
-    }
-
-    this.name = optsOrCmds.name ?? nameOrSource;
+    this.name = name;
     this.commands = new Set(optsOrCmds.commands ?? []);
   }
 
@@ -115,11 +99,10 @@ export class McFunction {
     return funct;
   }
 
-  /**
-   * @deprecated Use the constructor instead
-   */
-  static from(source: () => void, opts: { name?: string } = {}) {
-    return new McFunction(source, opts);
+  static from(source: () => void, opts: FromOptions = {}) {
+    const transpiler = new Transpiler();
+    const result = transpiler.transpile(source, opts.name);
+    return result.rootFunction;
   }
 }
 
