@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "prepare": "npm run lint --silent && npm run build --silent",
+    "prepublishOnly": "npm run lint --silent && npm run build --silent",
     "build": "tsc --build",
     "lint": "eslint src --fix --quiet",
     "pretest": "npm run build --silent",
