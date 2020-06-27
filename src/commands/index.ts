@@ -125,6 +125,7 @@ export * from "./java/function";
 export * from "./java/gamemode";
 export * from "./java/give";
 export * from "./java/kill";
+export * from "./java/loot";
 export * from "./java/say";
 export * from "./java/scoreboard";
 export * from "./java/summon";
