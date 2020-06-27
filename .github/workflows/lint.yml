@@ -1,0 +1,15 @@
+name: Linting
+
+on: [push]
+
+jobs:
+  coverage:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install
+      run: npm ci
+    - name: Run linter
+      run: npm run lint -- --no-fix --no-quiet
