@@ -12,7 +12,8 @@ export abstract class Command<
   static readonly ARGUMENTS: typeof ARGUMENTS = ARGUMENTS;
 
   readonly [NAME]: T;
-  declare readonly [ARGUMENTS]: U;
+  readonly #arguments?: U;
+
   /**
    * @param {CommandName} name the command to be executed
    * @param {Argument[]} args the parameters to be passed to the command
@@ -21,9 +22,18 @@ export abstract class Command<
     super();
     this[NAME] = name;
     if (args) {
-      this[ARGUMENTS] = args;
+      this.#arguments = args;
     }
     Transpiler.emit("command", this);
+  }
+
+  get [ARGUMENTS](): U {
+    if (!this.#arguments) {
+      throw Error(
+        "Subclasses of Command have to overwrite the argument getter or provide an #arguments property."
+      );
+    }
+    return this.#arguments;
   }
 
   async *compile() {
@@ -115,6 +125,7 @@ export * from "./java/function";
 export * from "./java/gamemode";
 export * from "./java/give";
 export * from "./java/kill";
+export * from "./java/loot";
 export * from "./java/say";
 export * from "./java/scoreboard";
 export * from "./java/summon";

@@ -1,63 +1,53 @@
 import { Command } from "..";
 import { Selector } from "../../arguments";
 
-type ObjectivesAdd =
-  | ["objectives", "add", string, string]
-  | ["objectives", "add", string, string, string];
-type ObjectivesList = ["objectives", "add"];
-type ObjectivesModify1 = [
-  "objectives",
-  "modify",
-  string,
-  "displayname",
-  string
+type ObjectivesAdd = [method: "add", objective: string, criterion: string, ...displayName: ([displayName: string] | [])];
+type ObjectivesList = [method: "list"];
+type ModifyDisplayName = [option: "displayname", displayName: string];
+type ModifyRenderType = [option: "rendertype", renderType: "hearts" | "integer"];
+type ObjectivesModify = [method: "modify", objective: string, ...option: (ModifyDisplayName|ModifyRenderType)];
+type ObjectivesRemove = [method: "remove", objective: string];
+type ObjectivesSetdisplay = [method: "setdisplay", slot: string, ...objective: ([objective: string]|[])];
+type Objectives = [
+  command: "objectives",
+  ...arguments: (
+    | ObjectivesAdd
+    | ObjectivesList
+    | ObjectivesModify
+    | ObjectivesRemove
+    | ObjectivesSetdisplay
+  )
 ];
-type ObjectivesModify2 = [
-  "objectives",
-  "modify",
-  string,
-  "rendertype",
-  "hearts" | "integer"
-];
-type ObjectivesRemove = ["objectives", "remove", string];
-type ObjectivesSetdisplay =
-  | ["objectives", "setdisplay", string, string]
-  | ["objectives", "setdisplay", string];
-type Objectives =
-  | ObjectivesAdd
-  | ObjectivesList
-  | ObjectivesModify1
-  | ObjectivesModify2
-  | ObjectivesRemove
-  | ObjectivesSetdisplay;
 
-type PlayersList = ["players", "list"] | ["players", "list", "*" | Selector];
-type PlayersGet = ["players", "get", Selector, string];
-type PlayersSet = ["players", "set", Selector, string, number];
-type PlayersAdd = ["players", "add", Selector, string, number];
-type PlayersRemove = ["players", "remove", Selector, string, number];
-type PlayersReset =
-  | ["players", "reset", Selector]
-  | ["players", "reset", Selector, string];
-type PlayersEnable = ["players", "enable", Selector, string];
+type PlayersList = [method: "list", ...target: ([target: "*" | Selector] | [])];
+type PlayersGet = [method: "get", target: Selector, objective: string];
+type PlayersSet = [method: "set", targets: Selector, objective: string, score: number];
+type PlayersAdd = [method: "add", targets: Selector, objective: string, score: number];
+type PlayersRemove = [method: "remove", targets: Selector, objective: string, score: number];
+type PlayersReset = [method: "reset", targets: Selector, ...objective: ([objective: string] | [])]
+type PlayersEnable = [method: "enable", targets: Selector, objective: string];
+type Operator = "+=" | "-=" | "*=" | "/=" | "%=" | "=" | "<" | ">" | "><";
 type PlayersOperation = [
-  "players",
-  "operation",
-  Selector,
-  string,
-  "+=" | "-=" | "*=" | "/=" | "%=" | "=" | "<" | ">" | "><",
-  Selector,
-  string
+  method: "operation",
+  targets: Selector,
+  targetObjective: string,
+  operator: Operator,
+  source: Selector,
+  sourceObjective: string
 ];
-type Players =
-  | PlayersList
-  | PlayersGet
-  | PlayersSet
-  | PlayersAdd
-  | PlayersRemove
-  | PlayersReset
-  | PlayersEnable
-  | PlayersOperation;
+type Players = [
+  command: "players",
+  ...arguments: (
+    | PlayersList
+    | PlayersGet
+    | PlayersSet
+    | PlayersAdd
+    | PlayersRemove
+    | PlayersReset
+    | PlayersEnable
+    | PlayersOperation
+  )
+];
 
 type Args = Objectives | Players;
 
