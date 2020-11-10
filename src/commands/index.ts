@@ -5,112 +5,111 @@ const NAME: unique symbol = Symbol("name");
 const ARGUMENTS: unique symbol = Symbol("arguments");
 
 export abstract class Command<
-  T extends keyof CommandContext = keyof CommandContext,
-  U extends Argument[] = Argument[]
+	T extends keyof CommandContext = keyof CommandContext,
+	U extends Argument[] = Argument[]
 > extends ArgumentObject {
-  static readonly NAME: typeof NAME = NAME;
-  static readonly ARGUMENTS: typeof ARGUMENTS = ARGUMENTS;
+	static readonly NAME: typeof NAME = NAME;
+	static readonly ARGUMENTS: typeof ARGUMENTS = ARGUMENTS;
 
-  readonly [NAME]: T;
-  readonly #arguments?: U;
+	readonly [NAME]: T;
+	readonly #arguments?: U;
 
-  /**
-   * @param {CommandName} name the command to be executed
-   * @param {Argument[]} args the parameters to be passed to the command
-   */
-  constructor(name: T, args?: U) {
-    super();
-    this[NAME] = name;
-    if (args) {
-      this.#arguments = args;
-    }
-    Transpiler.emit("command", this);
-  }
+	/**
+	 * @param {CommandName} name the command to be executed
+	 * @param {Argument[]} args the parameters to be passed to the command
+	 */
+	constructor(name: T, args?: U) {
+		super();
+		this[NAME] = name;
+		if (args) {
+			this.#arguments = args;
+		}
+		Transpiler.emit("command", this);
+	}
 
-  get [ARGUMENTS](): U {
-    if (!this.#arguments) {
-      throw Error(
-        "Subclasses of Command have to overwrite the argument getter or provide an #arguments property."
-      );
-    }
-    return this.#arguments;
-  }
+	get [ARGUMENTS](): U {
+		if (!this.#arguments) {
+			throw Error(
+				"Subclasses of Command have to overwrite the argument getter or provide an #arguments property."
+			);
+		}
+		return this.#arguments;
+	}
 
-  async *compile() {
-    yield this[NAME];
-    for (const arg of this[ARGUMENTS]) {
-      yield " ";
-      if (typeof arg === "string") {
-        yield arg;
-        continue;
-      }
+	async *compile() {
+		yield this[NAME];
+		for (const arg of this[ARGUMENTS]) {
+			yield " ";
+			if (typeof arg === "string") {
+				yield arg;
+				continue;
+			}
 
-      if (typeof arg === "number") {
-        yield `${arg}`;
-        continue;
-      }
+			if (typeof arg === "number") {
+				yield `${arg}`;
+				continue;
+			}
 
-      if (arg instanceof ArgumentObject) {
-        for await (const s of arg.compile()) {
-          yield s;
-        }
-        continue;
-      }
+			if (arg instanceof ArgumentObject) {
+				for await (const s of arg.compile()) yield s;
 
-      if (Array.isArray(arg) && arg.length === 2) {
-        yield rangeToString(arg);
-        continue;
-      }
+				continue;
+			}
 
-      throw Error("Unknown type of argument");
-    }
-  }
+			if (Array.isArray(arg) && arg.length === 2) {
+				yield rangeToString(arg);
+				continue;
+			}
 
-  /**
-   * @deprecated Use compile instead */
-  toString() {
-    let cmd: string = this[NAME];
-    for (const arg of this[ARGUMENTS]) {
-      cmd += " ";
-      if (typeof arg === "string") {
-        cmd += arg;
-        continue;
-      }
+			throw Error("Unknown type of argument");
+		}
+	}
 
-      if (typeof arg === "number") {
-        cmd += `${arg}`;
-        continue;
-      }
+	/**
+	 * @deprecated Use {@link Command#compile} instead */
+	toString() {
+		let cmd: string = this[NAME];
+		for (const arg of this[ARGUMENTS]) {
+			cmd += " ";
+			if (typeof arg === "string") {
+				cmd += arg;
+				continue;
+			}
 
-      if (arg instanceof ArgumentObject) {
-        cmd += arg.toString();
-        continue;
-      }
+			if (typeof arg === "number") {
+				cmd += `${arg}`;
+				continue;
+			}
 
-      if (Array.isArray(arg) && arg.length === 2) {
-        cmd += rangeToString(arg);
-        continue;
-      }
+			if (arg instanceof ArgumentObject) {
+				cmd += arg.toString();
+				continue;
+			}
 
-      throw Error("Unknown type of argument");
-    }
-    return cmd;
-  }
+			if (Array.isArray(arg) && arg.length === 2) {
+				cmd += rangeToString(arg);
+				continue;
+			}
 
-  static commands = {} as CommandContext;
+			throw Error("Unknown type of argument");
+		}
+		return cmd;
+	}
 
-  static registerCommand<T extends keyof CommandContext>(
-    name: T,
-    cmd: CommandContext[T]
-  ) {
-    if (this.commands[name]) {
-      throw Error(
-        `Trying to register command ${name} failed. Command already registered.`
-      );
-    }
+	static commands = {} as CommandContext;
 
-    this.commands[name] = cmd;
-  }
+	static registerCommand<T extends keyof CommandContext>(
+		name: T,
+		cmd: CommandContext[T]
+	) {
+		if (this.commands[name]) {
+			throw Error(
+				`Trying to register command ${name} failed. Command already registered.`
+			);
+		}
+
+		this.commands[name] = cmd;
+	}
 }
 
 export * from "./java/advancement";
