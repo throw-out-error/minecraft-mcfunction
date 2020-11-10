@@ -110,6 +110,7 @@ export * from "./java/clone";
 export * from "./java/datapack";
 export * from "./java/difficulty";
 export * from "./java/effect";
+export * from "./java/enchant";
 export * from "./java/execute";
 export * from "./java/function";
 export * from "./java/gamemode";
