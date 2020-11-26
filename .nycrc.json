@@ -1,0 +1,5 @@
+{
+    "include": ["src/**", "dist/**"],
+    "reporter": ["text", "html"],
+    "report-dir": "coverage"
+}

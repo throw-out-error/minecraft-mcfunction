@@ -1,32 +1,51 @@
 {
-  "name": "@throw-out-error/minecraft-mcfunction",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/function.js",
-  "files": [
-    "dist/**/*"
-  ],
-  "scripts": {
-    "prepublishOnly": "npm test && npm run lint",
-    "prepare": "npm run build",
-    "version": "npm run format && git add -A src",
-    "build": "tsc --build",
-    "preversion": "npm run lint",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint src"
-  },
-  "types": "dist/function.d.ts",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^13.9.8",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-prettier": "^3.1.2",
-    "prettier": "^2.0.2",
-    "tslint": "^6.1.0",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.8.3"
-  }
+    "name": "@toes/mcfunction",
+    "version": "1.3.0",
+    "description": "A simple way to create your mcfunction files using Typescript syntax.",
+    "main": "dist/index.js",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "prepublishOnly": "npm run lint --silent --quiet --fix && npm run build --silent",
+        "build": "tsc --build",
+        "lint": "eslint src",
+        "test": "ts-mocha test/**/*.ts",
+        "precoverage": "npm run build --silent",
+        "coverage": "nyc ts-mocha test/**/*.ts"
+    },
+    "types": "dist/index.d.ts",
+    "keywords": [
+        "minecraft",
+        "datapack",
+        "mcfunction"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/throw-out-error/minecraft-mcfunction"
+    },
+    "license": "MIT",
+    "contributors": [
+        "Brent Trenholme",
+        "Theo Paris",
+        "Sebastian Speitel"
+    ],
+    "devDependencies": {
+        "@types/mocha": "^8.0.4",
+        "@types/node": "14.14.10",
+        "@typescript-eslint/eslint-plugin": "4.8.2",
+        "@typescript-eslint/parser": "4.8.2",
+        "eslint": "7.14.0",
+        "eslint-config-prettier": "6.15.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "mocha": "8.2.1",
+        "nyc": "15.1.0",
+        "prettier": "2.2.0",
+        "source-map-support": "0.5.19",
+        "ts-mocha": "8.0.0",
+        "typescript": "4.1.2"
+    },
+    "dependencies": {
+        "nbt-ts": "^1.3.3"
+    }
 }
