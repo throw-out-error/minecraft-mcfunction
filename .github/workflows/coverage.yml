@@ -3,12 +3,21 @@ name: Coverage
 on: [push]
 
 jobs:
-  coverage:
-    runs-on: ubuntu-latest
+    coverage:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install
-        run: npm ci
-      - name: Run coverage
-        run: npm run coverage
+        strategy:
+            matrix:
+                node-version: [12.x, 14.x]
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - run: npm add -g pnpm
+            - run: pnpm install
+            - run: pnpm run coverage
+              env:
+                  CI: true
