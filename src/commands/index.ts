@@ -104,10 +104,13 @@ export abstract class Command<
 }
 
 export * from "./java/advancement";
+export * from "./java/bossbar";
 export * from "./java/clear";
+export * from "./java/clone";
 export * from "./java/datapack";
 export * from "./java/difficulty";
 export * from "./java/effect";
+export * from "./java/enchant";
 export * from "./java/execute";
 export * from "./java/function";
 export * from "./java/gamemode";
@@ -116,3 +119,5 @@ export * from "./java/kill";
 export * from "./java/say";
 export * from "./java/scoreboard";
 export * from "./java/summon";
+export * from "./java/teleport";
+export * from "./java/tp";
