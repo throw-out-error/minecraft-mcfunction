@@ -3,7 +3,7 @@ import { Argument, Position } from "../../arguments";
 
 type MaskMode = "replace" | "masked";
 
-function isMaskMode(arg: any): arg is MaskMode {
+function isMaskMode(arg: unknown): arg is MaskMode {
     return arg === "replace" || arg === "masked";
 }
 

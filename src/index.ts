@@ -14,7 +14,7 @@ interface FromOptions {
     name?: string;
 }
 
-function isIterable<T = any>(iter: any): iter is Iterable<T> {
+function isIterable<T = unknown>(iter: unknown): iter is Iterable<T> {
     return typeof iter[Symbol.iterator] === "function";
 }
 
@@ -37,7 +37,7 @@ export class McFunction {
     }
 
     compile(): ReturnType<McFunction["generate"]>;
-    compile(path: string): Promise<any>;
+    compile(path: string): Promise<unknown[]>;
     compile(path?: string) {
         if (!path) return this.generate();
 
@@ -45,7 +45,7 @@ export class McFunction {
         mkdirIfNotExist(pth.dirname(functionPath));
         const writeStream = fs.createWriteStream(functionPath);
 
-        const compiling: Promise<any>[] = [];
+        const compiling: Promise<unknown>[] = [];
 
         // pipeline accepts a generator, but typescript doesn't know that
         compiling.push(pipeline(Readable.from(this.generate()), writeStream));
@@ -84,12 +84,12 @@ export class McFunction {
      * @param {Command} command the command to be added
      * @deprecated pass the commands as an array to the constructor instead
      */
-  addCommand(command: Command) {} // eslint-disable-line
+    addCommand(command: Command) {} // eslint-disable-line
     /**
      * Copies the function
      * @param {McFunction} funct the function to be copied
      * @returns {McFunction} a reference to the function
-     * @deprecated This implementation only creates a shallow copy and copies aren't necessary anyways
+     * @deprecated This implementation only creates a shallow copy and copies aren't necessary unknownways
      */
     static copy(funct: McFunction): McFunction {
         return funct;

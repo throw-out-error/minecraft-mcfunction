@@ -1,5 +1,5 @@
 import { Command } from "..";
-import { Selector, Item, Argument } from "../../arguments";
+import { Selector } from "../../arguments";
 
 type Id = string;
 type JSONText = string;

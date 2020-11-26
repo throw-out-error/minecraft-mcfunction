@@ -45,7 +45,7 @@ function hasIllegalCharsSlash(s: string): boolean {
     return s != s.replace(/[^0-9a-z_\-./]/g, "");
 }
 
-function itemArrayFromString(s: string): Array<any> {
+function itemArrayFromString(s: string): Array<unknown> {
     return s
         .split("||")
         .map((s) => (s[0] == "#" ? { tag: s.slice(1) } : { item: s }));

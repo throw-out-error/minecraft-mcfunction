@@ -88,9 +88,9 @@ export class Transpiler extends EventEmitter {
         this.#counter = 0;
         this.#root = name;
 
-        this.emit("function:start");
+        Transpiler.emit("function:start");
         source();
-        this.emit("function:end", { name, call: false });
+        Transpiler.emit("function:end", { name, call: false });
 
         Transpiler.running = undefined;
 

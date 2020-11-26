@@ -72,7 +72,7 @@ export class Selector extends ArgumentObject {
 
         const args = Object.entries(this.arguments) as [
             keyof SelectorArguments,
-            any
+            never
         ][];
 
         const list: [keyof SelectorArguments, string][] = [];
@@ -129,7 +129,7 @@ export class Selector extends ArgumentObject {
                     break;
                 }
                 default:
-                    list.push([arg, val.toString()]);
+                    list.push([arg, (val as Range).toString()]);
                     break;
             }
         });

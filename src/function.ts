@@ -1,4 +1,4 @@
-import { getDirname, mkdirIfNotExist, assumeMinecraft } from "./utility";
+import { getDirname, mkdirIfNotExist } from "./utility";
 import fs from "fs";
 class McFunction {
     commands: Command[];
@@ -125,11 +125,11 @@ class Value {
     value: string;
     /**
      * @param {string} type the type of the value
-     * @param {any} value the value that will be cast to a string
+     * @param value the value that will be cast to a string
      */
     constructor(
         type: "int" | "float" | "double" | "long" | "string",
-        value: any
+        value: unknown
     ) {
         if (["int", "float", "double", "long"].includes(type)) {
             this.type = type;

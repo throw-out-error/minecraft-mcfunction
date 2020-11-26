@@ -20,7 +20,7 @@ export abstract class Command<
     }
 
     getArguments(): U {
-        return this.arguments ?? [];
+        return this.arguments;
     }
 
     async *compile() {
