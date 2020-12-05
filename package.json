@@ -36,7 +36,7 @@
     "@typescript-eslint/eslint-plugin": "2.34.0",
     "@typescript-eslint/parser": "2.34.0",
     "eslint": "7.14.0",
-    "eslint-config-prettier": "6.11.0",
+    "eslint-config-prettier": "7.0.0",
     "mocha": "8.2.1",
     "nyc": "15.0.1",
     "prettier": "2.2.0",
