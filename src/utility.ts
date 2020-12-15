@@ -1,6 +1,6 @@
 import fs from "fs";
 
-function jsonBeautify(object: Record<string, unknown> | Array<any>): string {
+function jsonBeautify(object: Record<string, unknown> | Array<unknown>): string {
   const json: string[] = JSON.stringify(object).split("");
   let indent: number = 0;
   for (let i: number = 0; i < json.length; i++) {
@@ -40,7 +40,7 @@ function hasIllegalCharsSlash(s: string): boolean {
   return s != s.replace(/[^0-9a-z_\-./]/g, "");
 }
 
-function itemArrayFromString(s: string): Array<any> {
+function itemArrayFromString(s: string): Array<unknown> {
   return s
     .split("||")
     .map(s => (s[0] == "#" ? { tag: s.slice(1) } : { item: s }));
