@@ -7,7 +7,7 @@ export abstract class ArgumentObject {
   public abstract toString(): string;
 }
 
-const NAMESPACE: unique symbol = Symbol("namesapce");
+const NAMESPACE: unique symbol = Symbol("namespace");
 export abstract class NamespacedArgument extends ArgumentObject {
   static readonly NAMESPACE: typeof NAMESPACE = NAMESPACE;
   [NAMESPACE]: string = "minecraft";
@@ -15,6 +15,7 @@ export abstract class NamespacedArgument extends ArgumentObject {
 
 export type Argument = ArgumentObject | string | number | Range;
 
+export * from "./block";
 export * from "./entity";
 export * from "./item";
 export * from "./nbt";
