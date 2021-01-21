@@ -1,4 +1,5 @@
 import { ArgumentObject, Range, rangeToString, NBT, EntityID } from "./";
+import { Transpiler } from "../transpiler";
 
 export enum SelectorTarget {
   nearest = "p",
@@ -246,5 +247,13 @@ export class Selector extends ArgumentObject {
   }
   static random(args: SelectorArguments = {}) {
     return new Selector(SelectorTarget.random, args);
+  }
+
+  *[Symbol.iterator]() {
+    Transpiler.emit("function:start");
+    const iterator = new Selector("executer");
+    Transpiler.emit("iteration", this, iterator);
+    yield iterator;
+    Transpiler.emit("function:end");
   }
 }
